@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="calculoTempo.cs" />
     <Compile Include="calculoTransferencia.cs" />
     <Compile Include="frmCalculoTransferencia.cs">
       <SubType>Form</SubType>

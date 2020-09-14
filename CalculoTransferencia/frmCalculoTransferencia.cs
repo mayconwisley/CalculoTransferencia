@@ -18,6 +18,7 @@ namespace CalculoTransferencia
         }
 
         calculoTransferencia calculo;
+        calculoTempo tempo;
         decimal downBits = 1, upBits = 1, downByte = 1, upByte = 1;
         decimal tamanho1 = 1, tamanho2 = 1, tamahoArquivo = 1, tempoTransferenciaDown = 1, tempoTransferenciaUp = 1;
         decimal horasDown = 1, minutosDown = 1, diasDown = 1;
@@ -116,72 +117,94 @@ namespace CalculoTransferencia
 
         private void calcTamanho()
         {
-            try
+            calculo = new calculoTransferencia();
+
+            decimal val = 0;
+
+            if (decimal.TryParse(txtArquivoTamanho1.Text.Trim(), out val))
             {
-                calculo = new calculoTransferencia();
-                tamanho1 = decimal.Parse(txtArquivoTamanho1.Text);
-                tamanho2 = decimal.Parse(txtArquivoTamanho2.Text);
-                tamahoArquivo = calculo.tamanhoDiferenca(tamanho1, tamanho2);
-                lblTamDiferenca.Text = "Tamanho Diferença: " + tamahoArquivo.ToString("#,##0.0000");
+                tamanho1 = val;
             }
-            catch
+            else
             {
+                MessageBox.Show("Digite apenas números", "Erro");
+                txtArquivoTamanho1.Text = "1";
             }
+
+            if (decimal.TryParse(txtArquivoTamanho2.Text.Trim(), out val))
+            {
+                tamanho2 = val;
+            }
+            else
+            {
+                MessageBox.Show("Digite apenas números", "Erro");
+                txtArquivoTamanho2.Text = "0";
+            }
+
+            tamahoArquivo = calculo.tamanhoDiferenca(tamanho1, tamanho2);
+            lblTamDiferenca.Text = "Tamanho Diferença: " + tamahoArquivo.ToString("#,##0.0000");
         }
 
         private void calcByte()
         {
-            try
-            {
-                calculo = new calculoTransferencia();
-                downBits = decimal.Parse(txtBiteDown.Text);
-                upBits = decimal.Parse(txtBiteUp.Text);
-                downByte = calculo.downByte(downBits);
-                upByte = calculo.upByte(upBits);
+            calculo = new calculoTransferencia();
+            decimal val = 0;
 
-
-                txtByteDown.Text = downByte.ToString("#,##0.0000");
-                txtByteUp.Text = upByte.ToString("#,##0.0000");
-            }
-            catch
+            if (decimal.TryParse(txtBiteDown.Text.Trim(), out val))
             {
+                downBits = val;
             }
+            else
+            {
+                MessageBox.Show("Digite apenas números", "Erro");
+                txtBiteDown.Text = "1";
+            }
+
+            if (decimal.TryParse(txtBiteUp.Text.Trim(), out val))
+            {
+                upBits = val;
+            }
+            else
+            {
+                MessageBox.Show("Digite apenas números", "Erro");
+                txtBiteUp.Text = "1";
+            }
+            downByte = calculo.downByte(downBits);
+            upByte = calculo.upByte(upBits);
+            txtByteDown.Text = downByte.ToString("#,##0.0000");
+            txtByteUp.Text = upByte.ToString("#,##0.0000");
+
         }
         private void calcTempo()
         {
-            try
-            {
-                calculo = new calculoTransferencia();
-                tipoArquivo = cbxTipoArquivo1.SelectedIndex;
+            calculo = new calculoTransferencia();
+            tempo = new calculoTempo();
+            tipoArquivo = cbxTipoArquivo1.SelectedIndex;
 
-                tempoTransferenciaDown = calculo.tempoTranferenciaDown(tipoArquivo, tamahoArquivo, downByte);
-                tempoTransferenciaUp = calculo.tempoTranferenciaUp(tipoArquivo, tamahoArquivo, upByte);
+            tempoTransferenciaDown = calculo.tempoTranferenciaDown(tipoArquivo, tamahoArquivo, downByte);
+            tempoTransferenciaUp = calculo.tempoTranferenciaUp(tipoArquivo, tamahoArquivo, upByte);
 
-                minutosDown = tempoTransferenciaDown / 60;
-                horasDown = tempoTransferenciaDown / 60 / 60;
-                diasDown = tempoTransferenciaDown / 60 / 60 / 24;
+            minutosDown = tempo.minutosDown(tempoTransferenciaDown);
+            horasDown = tempo.horasDown(tempoTransferenciaDown);
+            diasDown = tempo.diasDown(tempoTransferenciaDown);
 
-                minutosUp = tempoTransferenciaUp / 60;
-                horasUp = tempoTransferenciaUp / 60 / 60;
-                diasUp = tempoTransferenciaUp / 60 / 60 / 24;
+            minutosUp = tempo.minutosUp(tempoTransferenciaUp);
+            horasUp = tempo.horasUp(tempoTransferenciaUp);
+            diasUp = tempo.diasUp(tempoTransferenciaUp);
 
-                porcentagem = (tamanho2 * 100) / tamanho1;
+            porcentagem = tempo.porcentagem(tamanho1, tamanho2);
 
-                txtInformacao.Text = "TEMPO DE DOWNLOAD" +
-                                     "\nHoras: " + horasDown.ToString("#,##0.0000") +
-                                     "\nMinutos: " + minutosDown.ToString("#,##0.0000") +
-                                     "\nDias: " + diasDown.ToString("#,##0.0000") +
-                                     "\n\nTEMPO DE UPLOAD" +
-                                     "\nHoras: " + horasUp.ToString("#,##0.0000") +
-                                     "\nMinutos: " + minutosUp.ToString("#,##0.0000") +
-                                     "\nDias: " + diasUp.ToString("#,##0.0000") +
-                                     "\n\nPORCENTAGEM" +
-                                     "\nConcluido: " + porcentagem.ToString("00.00") + "%";
+            txtInformacao.Text = "TEMPO DE DOWNLOAD" +
+                                 "\nHoras: " + horasDown.ToString("#,##0.0000") +
+                                 "\nMinutos: " + minutosDown.ToString("#,##0.0000") +
+                                 "\nDias: " + diasDown.ToString("#,##0.0000") +
+                                 "\n\nTEMPO DE UPLOAD" +
+                                 "\nHoras: " + horasUp.ToString("#,##0.0000") +
+                                 "\nMinutos: " + minutosUp.ToString("#,##0.0000") +
+                                 "\nDias: " + diasUp.ToString("#,##0.0000") +
+                                 "\n\nPORCENTAGEM" +
+                                 "\nConcluido: " + porcentagem.ToString("00.00") + "%";
 
-            }
-            catch
-            {
-            }
         }
     }
 }
